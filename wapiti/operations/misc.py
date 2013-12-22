@@ -111,7 +111,7 @@ class GetPageExtract(QueryOperation):
             page_example = PageExtract(title=pid_dict['title'],
                                        ns=pid_dict['ns'],
                                        id=pid,
-                                       extract=pid_dict['extract'])
+                                       extract=pid_dict.get('extract'))
             ret.append(page_example)
         return ret
 
