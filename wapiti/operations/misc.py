@@ -99,7 +99,8 @@ class GetPageExtract(QueryOperation):
     input_field = MultiParam('titles', key_prefix=False)
     fields = [StaticParam('prop', 'extracts'),
               SingleParam('sentences', '3'),
-              SingleParam('plaintext', 'true')]
+              SingleParam('plaintext', 'true'),
+              StaticParam('exlimit', '1')]
     output_type = [PageExtract]
     examples = [OperationExample('Coffee')]
 
