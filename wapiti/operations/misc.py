@@ -11,6 +11,7 @@ from utils import OperationExample
 # TODO: These operations should be moved to the proper file
 # TODO: convert to real model(s)
 QueryPageInfo = namedtuple('QueryPageInfo', 'title ns value querypage cache')
+PageExtract = namedtuple('PageExtract', 'title ns id extract')
 
 DEFAULT_COORD_PROPS = ['type', 'name', 'dim', 'country', 'region']
 
@@ -92,6 +93,28 @@ class GetRecentChanges(QueryOperation):
                                              source=self.source)
             ret.append(page_ident)
         return ret
+
+class GetPageExtract(QueryOperation):
+    field_prefix = 'ex'
+    input_field = MultiParam('titles', key_prefix=False)
+    fields = [StaticParam('prop', 'extracts'),
+              SingleParam('sentences', '3'),
+              SingleParam('plaintext', 'true')]
+    output_type = [PageExtract]
+    examples = [OperationExample('Coffee')]
+
+    def extract_results(self, query_resp):
+        ret = []
+        for pid, pid_dict in query_resp['pages'].iteritems():
+            if pid.startswith('-'):
+                continue
+            page_example = PageExtract(title=pid_dict['title'],
+                                       ns=pid_dict['ns'],
+                                       id=pid,
+                                       extract=pid_dict['extract'])
+            ret.append(page_example)
+        return ret
+
 
 '''
 If we are completionists (for action=query)

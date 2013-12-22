@@ -386,8 +386,9 @@ class Operation(object):
     def process(self):
         self.started = True
         task = self.get_current_task()
-        if self.client.debug:
-            print self.__class__.__name__, self.remaining
+        # TODO: Where did client.debug go?
+        #if self.client.debug:
+        #    print self.__class__.__name__, self.remaining
         if task is None:
             raise NoMoreResults()
         elif isinstance(task, Operation):
