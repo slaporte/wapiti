@@ -5,7 +5,7 @@ from collections import namedtuple
 
 from base import QueryOperation
 from params import SingleParam, MultiParam, StaticParam
-from models import PageIdentifier, CoordinateIdentifier, PageInfo
+from models import PageIdentifier, CoordinateIdentifier, PageInfo, ImageInfo
 from utils import OperationExample
 
 # TODO: These operations should be moved to the proper file
@@ -114,6 +114,30 @@ class GetPageExtract(QueryOperation):
                                        id=pid,
                                        extract=pid_dict.get('extract'))
             ret.append(page_example)
+        return ret
+
+
+class GetPageImage(QueryOperation):
+    # ?action=query&prop=pageimages&titles=Coffee&format=json
+    field_prefix = 'pi'
+    input_field = MultiParam('titles', key_prefix=False)
+    fields = [StaticParam('prop', 'pageimages'),
+              SingleParam('thumbsize', '50'),
+              SingleParam('limit', '1')]
+    output_type = [ImageInfo]
+    examples = [OperationExample('Coffee')]
+
+    def extract_results(self, query_resp):
+        ret = []
+        for pid, pid_dict in query_resp['pages'].iteritems():
+            if pid.startswith('-'):
+                continue
+            page_image = ImageInfo(url=pid_dict['thumbnail']['source'],
+                                   title=pid_dict['pageimage'],
+                                   ns='6',
+                                   image_repo='shared', # this would require imageinfo to check
+                                   source='')
+            ret.append(page_image)
         return ret
 
 
